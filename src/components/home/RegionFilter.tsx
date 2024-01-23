@@ -4,11 +4,12 @@ import { useDarkModeContext } from "../../context/DarkModeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
+import { useCountryAPIContext } from "../../context/CountryAPIContext";
 
 const regionsArr: Region[] = [
   Region.All,
   Region.Africa,
-  Region.America,
+  Region.Americas,
   Region.Asia,
   Region.Europe,
   Region.Ocenia,
@@ -18,10 +19,21 @@ const RegionFilter = () => {
   const { elementModeStyling } = useDarkModeContext();
   const [region, setRegion] = useState<Region>(Region.All);
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
+  const { getCountryData } = useCountryAPIContext();
 
   const handleRegionFilter = (value: Region) => {
+    let lowerCaseRegion = value.toLocaleLowerCase();
     setRegion(value);
     setToggleMenu(false);
+    if (value === "All") {
+      getCountryData(
+        "https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags"
+      );
+    } else {
+      getCountryData(
+        `https://restcountries.com/v3.1/region/${lowerCaseRegion}?fields=name,capital,region,population,flags`
+      );
+    }
   };
 
   useEffect(() => {
@@ -30,7 +42,7 @@ const RegionFilter = () => {
 
   return (
     <div
-      className={`${elementModeStyling} relative w-[200px] rounded-md text-[14px] transition duration-500`}
+      className={`${elementModeStyling} relative w-[200px] mb-8 rounded-md text-[14px] transition duration-500`}
     >
       <button
         className="w-full p-[16px]  text-left"

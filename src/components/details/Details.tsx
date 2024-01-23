@@ -1,9 +1,14 @@
+import { useSelectCountryContext } from "../../context/SelectCountryContext";
+
 type Props = {};
 
 const Details = (props: Props) => {
+  const { selectedCountry } = useSelectCountryContext();
+
   return (
     <div>
       {/* BACK BUTTON */}
+      <h1>{selectedCountry}</h1>
       <div>
         {/* COUNTRY FLAG - LEFT COLUMN*/}
         <div>

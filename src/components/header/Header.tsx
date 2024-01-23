@@ -10,7 +10,7 @@ const Header = () => {
     <header
       className={`mb-8 transition duration-500 ${elementModeStyling} md:mb-8`}
     >
-      <div className="flex justify-between items-center w-[90%] h-[65px] mx-auto md:max-w-[1100px]">
+      <div className="flex justify-between items-center w-[90%] h-[65px] mx-auto md:max-w-[1250px]">
         <Link to="/">
           <h2 className="text-[14px] md:text-[20px]">Where in the world?</h2>
         </Link>
