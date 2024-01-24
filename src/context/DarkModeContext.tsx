@@ -11,7 +11,7 @@ export const DarkModeWrapper = ({ children }: Props) => {
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const elementModeStyling: string = darkMode
     ? "text-white bg-dark-blue"
-    : "text-ligh-dark-blue bg-white shadow-md";
+    : "text-light-dark-blue bg-white shadow-md";
 
   return (
     <DarkModeContext.Provider

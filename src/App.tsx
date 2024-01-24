@@ -9,31 +9,44 @@ import { useCountryAPIContext } from "./context/CountryAPIContext";
 
 function App() {
   const { darkMode } = useDarkModeContext();
-  const bgColor = darkMode ? "bg-dark-dark-blue" : "bg-very-light-gray";
+  const colorMode = darkMode
+    ? "bg-dark-dark-blue text-white"
+    : "bg-very-light-gray text-light-dark-blue";
   const [countryData, setCountryData] = useState<Country[]>([]);
-  const { countries, isLoading, getCountryData } = useCountryAPIContext();
+  const [allCountryData, setAllCountryData] = useState<Country[]>([]);
+  const { countries, getCountryData } = useCountryAPIContext();
   let url =
-    "https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags";
+    "https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags,ccn3";
 
   useEffect(() => {
     getCountryData(url);
+    setAllCountryData(countries);
   }, []);
 
   useEffect(() => {
     setCountryData(countries);
+    if (allCountryData.length === 0) {
+      setAllCountryData(countries);
+    }
   }, [countries]);
 
   return (
     <>
       <main
-        className={`${bgColor} min-h-[100vh] h-full font-NunitoSans transition duration-500`}
+        className={`${colorMode} min-h-[100vh] h-full font-NunitoSans transition duration-500`}
       >
         <Header />
         <Routes>
           {/* HOMEPAGE */}
           <Route
             path="/"
-            element={<Home countryData={countryData} isLoading={isLoading} />}
+            element={
+              <Home
+                countryData={countryData}
+                setCountryData={setCountryData}
+                allCountryData={allCountryData}
+              />
+            }
           ></Route>
           {/* COUNTRY DETAILS PAGE */}
           <Route path="/details" element={<Details />}></Route>

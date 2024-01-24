@@ -1,51 +1,50 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Region } from "../../shared/types";
 import { useDarkModeContext } from "../../context/DarkModeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCountryAPIContext } from "../../context/CountryAPIContext";
+import { Country } from "../../shared/types";
 
 const regionsArr: Region[] = [
   Region.All,
   Region.Africa,
   Region.Americas,
+  Region.Antarctic,
   Region.Asia,
   Region.Europe,
   Region.Ocenia,
 ];
 
-const RegionFilter = () => {
+interface Props {
+  setCountryData: (value: Country[]) => void;
+  allCountryData: Country[];
+}
+
+const RegionFilter = ({ setCountryData, allCountryData }: Props) => {
   const { elementModeStyling } = useDarkModeContext();
   const [region, setRegion] = useState<Region>(Region.All);
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
-  const { getCountryData } = useCountryAPIContext();
 
   const handleRegionFilter = (value: Region) => {
     let lowerCaseRegion = value.toLocaleLowerCase();
     setRegion(value);
     setToggleMenu(false);
-    if (value === "All") {
-      getCountryData(
-        "https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags"
-      );
-    } else {
-      getCountryData(
-        `https://restcountries.com/v3.1/region/${lowerCaseRegion}?fields=name,capital,region,population,flags`
-      );
-    }
+    const filteredRegion = allCountryData.filter((country) => {
+      if (lowerCaseRegion === "all") {
+        return country.region;
+      }
+      return country.region.toLocaleLowerCase() === lowerCaseRegion;
+    });
+    setCountryData(filteredRegion);
   };
-
-  useEffect(() => {
-    console.log(region);
-  }, [region]);
 
   return (
     <div
       className={`${elementModeStyling} relative w-[200px] mb-8 rounded-md text-[14px] transition duration-500`}
     >
       <button
-        className="w-full p-[16px]  text-left"
+        className="w-full py-[16px] pl-6 text-left"
         onClick={() => setToggleMenu(!toggleMenu)}
       >
         {region === Region.All ? "Filter by Region" : region}
@@ -68,12 +67,12 @@ const RegionFilter = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className={`${elementModeStyling} flex flex-col gap-1 items-start absolute top-[65px] left-0 w-[200px] p-[16px] rounded-md`}
+            className={`${elementModeStyling} flex flex-col gap-1 items-start absolute top-[65px] left-0 w-[200px] p-[16px] rounded-md shadow-md`}
           >
             {regionsArr.map((area) => (
               <button
                 key={area}
-                className="w-full text-left py-1"
+                className="w-full text-left py-1 rounded-md pl-3 hover:bg-slate-600 hover:text-white transition duration-500"
                 onClick={() => handleRegionFilter(area)}
               >
                 {area}

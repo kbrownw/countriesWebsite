@@ -13,14 +13,15 @@ const CountryCard = ({ country }: Props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    setSelectedCountry(country.name.common);
+    setSelectedCountry(country.ccn3);
     navigate("/details");
   };
 
   return (
     <button
       onClick={handleClick}
-      className={`${elementModeStyling} flex flex-col w-[275px] min-h-[375px] pb-5 mx-auto rounded-md overflow-hidden transition duration-500`}
+      className={`${elementModeStyling} flex flex-col w-[275px] min-h-[375px] pb-5 mx-auto rounded-md overflow-hidden 
+      transition duration-500 hover:scale-110 hover:shadow-2xl`}
     >
       {/* FLAG IMAGE */}
       <div className="h-[175px] w-full">
@@ -34,7 +35,7 @@ const CountryCard = ({ country }: Props) => {
       <div className="pt-6 px-6 text-left text-[14px]">
         {/* COUNTRY NAME */}
         <h1 className=" font-extrabold text-[22px] pb-5">
-          {country.name.common}
+          {country.name.official}
         </h1>
         <div className="flex flex-col gap-1">
           {/* POPULATION */}

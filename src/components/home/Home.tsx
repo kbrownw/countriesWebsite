@@ -1,3 +1,4 @@
+import { useCountryAPIContext } from "../../context/CountryAPIContext";
 import { Country } from "../../shared/types";
 import CountryCard from "./CountryCard";
 import CountrySearch from "./CountrySearch";
@@ -5,17 +6,26 @@ import RegionFilter from "./RegionFilter";
 
 interface Props {
   countryData: Country[];
-  isLoading: boolean;
+  setCountryData: (value: Country[]) => void;
+  allCountryData: Country[];
 }
 
-const Home = ({ countryData, isLoading }: Props) => {
+const Home = ({ countryData, setCountryData, allCountryData }: Props) => {
+  const { isLoading } = useCountryAPIContext();
+
   return (
     <div>
       <div className="flex flex-col gap-10 w-[90%] justify-between mx-auto md:flex-row md:max-w-[1250px]">
         {/* SEARCH INPUT */}
-        <CountrySearch />
+        <CountrySearch
+          setCountryData={setCountryData}
+          allCountryData={allCountryData}
+        />
         {/* REGION SELECTION */}
-        <RegionFilter />
+        <RegionFilter
+          setCountryData={setCountryData}
+          allCountryData={allCountryData}
+        />
       </div>
       {/* COUNTRY RESULTS */}
       <div

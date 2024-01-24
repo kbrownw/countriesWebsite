@@ -1,12 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDarkModeContext } from "../../context/DarkModeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { Country } from "../../shared/types";
 
-const CountrySearch = () => {
+interface Props {
+  setCountryData: (value: Country[]) => void;
+  allCountryData: Country[];
+}
+
+const CountrySearch = ({ setCountryData, allCountryData }: Props) => {
   const { darkMode, elementModeStyling } = useDarkModeContext();
   const [searchText, setSearchText] = useState<string>("");
   const placeholderStyle = darkMode ? "placeholder-white" : "";
+
+  const searchFilter = (text: string) => {
+    const filteredData = allCountryData.filter((country) => {
+      return country.name.official
+        .toLocaleLowerCase()
+        .includes(text.toLocaleLowerCase());
+    });
+    setCountryData(filteredData);
+  };
+
+  useEffect(() => {
+    searchFilter(searchText);
+  }, [searchText]);
 
   return (
     <div className="relative">
