@@ -2,110 +2,184 @@ import { useEffect, useState } from "react";
 import { useSelectCountryContext } from "../../context/SelectCountryContext";
 import useCountryAPI from "../../hooks/useCountryAPI";
 import { Country } from "../../shared/types";
-import { useDarkModeContext } from "../../context/DarkModeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import Button from "../../shared/Button";
+import BorderCountries from "./BorderCountries";
 
-const Details = () => {
+interface Props {
+  allCountryData: Country[];
+  setAllCountryData: (value: Country[]) => void;
+}
+
+const Details = ({ allCountryData, setAllCountryData }: Props) => {
   const { selectedCountry } = useSelectCountryContext();
-  const [countryDetails, setCountryDetails] = useState<Country[]>([]);
-  const [countryLanguages, setCountryLanguages] = useState<string[]>([]);
+  const [countryDetails, setCountryDetails] = useState<Country>();
+  const [languageKeys, setLanguageKeys] = useState<string[]>([]);
+  const [currencyKeys, setCurrencyKeys] = useState<string[]>([]);
+  const [currencies, setCurrencies] = useState<string>();
+  const [languages, setLanguages] = useState<string>();
   const { countries, isLoading, errorOccurred, getCountryData } =
     useCountryAPI();
-  const { darkMode, elementModeStyling } = useDarkModeContext();
+  const navigate = useNavigate();
+  const [pageError, setPageError] = useState<boolean>(false);
 
-  const getLanguages = (country) => {
+  const getKeys = (country: Country) => {
     if (country) {
-      const languages = Object.keys(country.languages);
-      setCountryLanguages(languages);
-      console.log("Languages: ", languages);
+      console.log("getKeys Country: ", country);
+      setLanguageKeys(Object.keys(country.languages));
+      setCurrencyKeys(Object.keys(country.currencies));
     }
   };
 
   useEffect(() => {
-    getCountryData(`https://restcountries.com/v3.1/alpha/${selectedCountry}`);
-  }, []);
+    // Use unknown object keys to get object values, append values to an array,
+    // then convert the array to a comma separated list
+    if (languageKeys) {
+      if (countryDetails) {
+        console.log("languageKeys ran.");
+        let langArr: string[] = [];
+        let currencyArr: string[] = [];
+        languageKeys.forEach((key) => {
+          langArr.push(countryDetails.languages[key]);
+        });
+        currencyKeys.forEach((key) => {
+          currencyArr.push(countryDetails.currencies[key].name);
+        });
+        setLanguages(langArr.join(", "));
+        setCurrencies(currencyArr.join(", "));
+      }
+    }
+  }, [languageKeys]);
 
   useEffect(() => {
-    setCountryDetails(countries);
-    getLanguages(countries[0]);
-    console.log(selectedCountry);
-  }, [countries]);
+    if (selectedCountry) {
+      getCountryData(`https://restcountries.com/v3.1/alpha/${selectedCountry}`);
+    }
+  }, [selectedCountry]);
 
-  if (errorOccurred) {
-    return <h1>Oops....Something went wrong. Try again later!</h1>;
+  useEffect(() => {
+    if (countries.length > 0) {
+      setCountryDetails(countries[0]);
+      sessionStorage.setItem("countryDetails", JSON.stringify(countries[0]));
+      getKeys(countries[0]);
+    } else if (countries.length < 0 && allCountryData) {
+      if (countryDetails) {
+        getKeys(countryDetails);
+      }
+    }
+  }, [countries, allCountryData]);
+
+  useEffect(() => {
+    setPageError(false);
+    if (allCountryData.length < 0) {
+      const sessionAllCountryData = sessionStorage.getItem("allCountries");
+      console.log(sessionAllCountryData);
+      if (sessionAllCountryData) {
+        setAllCountryData(JSON.parse(sessionAllCountryData));
+      } else {
+        setPageError(true);
+      }
+    }
+    if (!selectedCountry) {
+      const sessionData = sessionStorage.getItem("countryDetails");
+      if (sessionData) {
+        const parsedData = JSON.parse(sessionData);
+        setCountryDetails(parsedData);
+      }
+    } else {
+      getCountryData(`https://restcountries.com/v3.1/alpha/${selectedCountry}`);
+    }
+  }, []);
+
+  if (errorOccurred || pageError) {
+    return (
+      <div>
+        <Button onClick={() => navigate(-1)}>
+          <FontAwesomeIcon icon={faArrowLeft} className="pr-3" />
+          Back
+        </Button>
+        <h1>Oops....Something went wrong. Try again later!</h1>
+      </div>
+    );
   }
 
   return (
     <>
       {isLoading && <h1>Loading...</h1>}
-      {countryDetails.length > 0 && (
-        <div className="flex flex-col gap-10 w-[90%] justify-between mt-20 mx-auto md:max-w-[1250px]">
+      {countryDetails !== undefined && (
+        <div className="flex flex-col gap-10 w-[80%] justify-between pb-20 mt-20 mx-auto md:max-w-[1250px]">
           {/* BACK BUTTON */}
-          <button
-            className={`${elementModeStyling} self-start py-3 px-10 w-auto rounded-md text-[14px] md:text-[16px] hover:bg-slate-600 hover:text-white transition duration-500`}
-          >
+          <Button onClick={() => navigate(-1)}>
             <FontAwesomeIcon icon={faArrowLeft} className="pr-3" />
             Back
-          </button>
-          <div className="flex flex-col md:flex-row md:gap-x-32 md:items-center">
+          </Button>
+          <div className="flex flex-col gap-y-10 mdlg:flex-row mdlg:gap-x-32 mdlg:gap-y-0 mdlg:items-center">
             {/* COUNTRY FLAG - LEFT COLUMN*/}
-            <div className="flex h-auto w-full">
+            <div className="flex basis-[50%] h-auto w-full">
               <img
                 className="h-full w-full object-cover"
                 src={
-                  countryDetails[0].flags.svg
-                    ? countryDetails[0].flags.svg
-                    : countryDetails[0].flags.png
+                  countryDetails.flags.svg
+                    ? countryDetails.flags.svg
+                    : countryDetails.flags.png
                 }
-                alt={countryDetails[0].flags.alt}
+                alt={countryDetails.flags.alt}
               />
             </div>
-            <div className="w-full">
-              {/* COUNTRY DETAILS DIV - RIGHT COLUMN*/}
+            {/* COUNTRY INFO TEXT - RIGHT COLUMN*/}
+            <div className="w-full basis-[50%]">
+              {/* COUNTRY NAME */}
               <h1 className="text-[22px] mb-10 font-[800] md:text-[30px]">
-                {countryDetails[0].name.official}
+                {countryDetails.name.official}
               </h1>
-              <div className="flex flex-col text-[14px] md:flex-row md:text-[16px] md:gap-x-20">
+              <div className="flex flex-col text-[14px] gap-y-3 md:flex-row md:text-[16px] md:gap-x-5 md:justify-between">
                 {/* COUNTRY DETAILS LEFT COLUMN */}
                 <div className="flex flex-col gap-3">
                   <p>
                     <span className="font-bold">Native Name:</span>{" "}
-                    {
-                      countryDetails[0].name.nativeName[countryLanguages[0]]
-                        .official
-                    }
+                    {languageKeys.length > 0 &&
+                      countryDetails.name.nativeName[languageKeys[0]].official}
                   </p>
                   <p>
                     <span className="font-bold">Population: </span>{" "}
-                    {countryDetails[0].population.toLocaleString()}
+                    {countryDetails.population.toLocaleString()}
                   </p>
                   <p>
                     <span className="font-bold">Region:</span>{" "}
-                    {countryDetails[0].region}
+                    {countryDetails.region}
                   </p>
                   <p>
                     <span className="font-bold">Sub Region:</span>{" "}
-                    {countryDetails[0].subregion}
+                    {countryDetails.subregion}
                   </p>
                   <p>
                     <span className="font-bold">Capital:</span>{" "}
-                    {countryDetails[0].capital}
+                    {countryDetails.capital}
                   </p>
                 </div>
                 {/* COUNTRY DETAILS RIGHT COLUMN */}
                 <div className="flex flex-col gap-3">
                   <p>
                     <span className="font-bold">Top Level Domain:</span>{" "}
-                    {countryDetails[0].tld}
+                    {countryDetails.tld}
                   </p>
                   <p>
-                    <span className="font-bold">Currencies:</span>{" "}
-                    {/* Finish later */}
+                    <span className="font-bold">Currencies:</span> {currencies}
+                  </p>
+                  <p>
+                    <span className="font-bold">Languages:</span> {languages}
                   </p>
                 </div>
               </div>
-              <div>{/* BORDER COUNTRIES */}</div>
+              {/* BORDER COUNTRIES */}
+              {countryDetails.borders && (
+                <BorderCountries
+                  allCountryData={allCountryData}
+                  borderCountries={countryDetails.borders}
+                />
+              )}
             </div>
           </div>
         </div>

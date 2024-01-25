@@ -18,7 +18,7 @@ export interface Country {
   name: {
     common: string;
     official: string;
-    nativeName?: {
+    nativeName: {
       [key: string]: {
         official: string;
         common: string;
@@ -28,12 +28,12 @@ export interface Country {
   tld?: string[];
   cca2?: string;
   ccn3: string;
-  cca3?: string;
+  cca3: string;
   cioc?: string;
   independent?: boolean;
   status?: string;
   unMember?: boolean;
-  currencies?: {
+  currencies: {
     [key: string]: {
       name: string;
       symbol: string;
@@ -44,10 +44,10 @@ export interface Country {
     suffixes: string[];
   };
   capital: string[];
-  altSpellings?: string[];
+  altSpellings: string[];
   region: string;
-  subregion?: string;
-  languages?: {
+  subregion: string;
+  languages: {
     [key: string]: string;
   };
   translations?: {
@@ -58,7 +58,7 @@ export interface Country {
   };
   latlng?: string[];
   landlocked?: boolean;
-  borders?: string[];
+  borders: string[];
   area?: number;
   demonyms?: {
     f: string;

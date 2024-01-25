@@ -15,18 +15,23 @@ function App() {
   const [countryData, setCountryData] = useState<Country[]>([]);
   const [allCountryData, setAllCountryData] = useState<Country[]>([]);
   const { countries, getCountryData } = useCountryAPIContext();
-  let url =
-    "https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags,ccn3";
+  let url = "https://restcountries.com/v3.1/all";
 
   useEffect(() => {
     getCountryData(url);
-    setAllCountryData(countries);
+    if (countries.length > 0) {
+      setAllCountryData(countries);
+      sessionStorage.setItem("allCountries", JSON.stringify(countries));
+    }
   }, []);
 
   useEffect(() => {
-    setCountryData(countries);
-    if (allCountryData.length === 0) {
-      setAllCountryData(countries);
+    if (countries.length > 0) {
+      sessionStorage.setItem("allCountries", JSON.stringify(countries));
+      setCountryData(countries);
+      if (allCountryData.length === 0) {
+        setAllCountryData(countries);
+      }
     }
   }, [countries]);
 
@@ -49,7 +54,15 @@ function App() {
             }
           ></Route>
           {/* COUNTRY DETAILS PAGE */}
-          <Route path="/details" element={<Details />}></Route>
+          <Route
+            path="/details"
+            element={
+              <Details
+                allCountryData={allCountryData}
+                setAllCountryData={setAllCountryData}
+              />
+            }
+          ></Route>
         </Routes>
       </main>
     </>

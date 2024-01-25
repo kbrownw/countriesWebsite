@@ -49,7 +49,8 @@ const CountryCard = ({ country }: Props) => {
           </p>
           {/* CAPITAL */}
           <p>
-            <span className="font-bold">Capital:</span> {country.capital[0]}
+            <span className="font-bold">Capital:</span>{" "}
+            {country.capital ? country.capital[0] : "N/A"}
           </p>
         </div>
       </div>
