@@ -16,7 +16,10 @@ const Header = () => {
         </Link>
         <button
           className="flex items-center gap-2 text-[14px] md:text-[16px]"
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => {
+            setDarkMode(!darkMode);
+            localStorage.setItem("darkMode", JSON.stringify(!darkMode));
+          }}
         >
           {darkMode ? (
             <>

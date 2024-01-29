@@ -35,7 +35,7 @@ const BorderCountries = ({ allCountryData, borderCountries }: Props) => {
       });
       setFullNameArr(arr);
     }
-  }, [borderCountries]);
+  }, [borderCountries, allCountryData]);
 
   return (
     <div className="flex flex-col gap-3 mt-10 mdlg:flex-row mdlg:mt-20 mdlg:items-center">

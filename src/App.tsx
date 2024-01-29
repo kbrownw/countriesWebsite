@@ -12,24 +12,32 @@ function App() {
   const colorMode = darkMode
     ? "bg-dark-dark-blue text-white"
     : "bg-very-light-gray text-light-dark-blue";
-  const [countryData, setCountryData] = useState<Country[]>([]);
+  const [filteredCountryData, setFilteredCountryData] = useState<Country[]>([]);
   const [allCountryData, setAllCountryData] = useState<Country[]>([]);
   const { countries, getCountryData } = useCountryAPIContext();
   let url = "https://restcountries.com/v3.1/all";
 
   useEffect(() => {
-    getCountryData(url);
-    if (countries.length > 0) {
-      setAllCountryData(countries);
-      sessionStorage.setItem("allCountries", JSON.stringify(countries));
+    // Look for cached country data in session storage
+    const allCountriesStored = sessionStorage.getItem("allCountries");
+    if (allCountriesStored) {
+      //If found, set the initial filtered countries variable to it along with the allCountries state variable
+      setAllCountryData(JSON.parse(allCountriesStored));
+      setFilteredCountryData(JSON.parse(allCountriesStored));
+    } else {
+      //If no session data was found then pull country data from API
+      getCountryData(url);
     }
   }, []);
 
   useEffect(() => {
+    //Runs after pulling country data from API
     if (countries.length > 0) {
+      //Once data is loaded, cache it to allCountries session storage and set filtered countries state
       sessionStorage.setItem("allCountries", JSON.stringify(countries));
-      setCountryData(countries);
+      setFilteredCountryData(countries);
       if (allCountryData.length === 0) {
+        //If allCountry data is empty then set the data to it as well
         setAllCountryData(countries);
       }
     }
@@ -38,7 +46,7 @@ function App() {
   return (
     <>
       <main
-        className={`${colorMode} min-h-[100vh] h-full font-NunitoSans transition duration-500`}
+        className={`${colorMode} min-h-[100vh] h-full overflow-x-hidden font-NunitoSans transition duration-500`}
       >
         <Header />
         <Routes>
@@ -47,8 +55,8 @@ function App() {
             path="/"
             element={
               <Home
-                countryData={countryData}
-                setCountryData={setCountryData}
+                filteredCountryData={filteredCountryData}
+                setFilteredCountryData={setFilteredCountryData}
                 allCountryData={allCountryData}
               />
             }

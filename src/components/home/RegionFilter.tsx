@@ -67,12 +67,12 @@ const RegionFilter = ({ setCountryData, allCountryData }: Props) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className={`${elementModeStyling} flex flex-col gap-1 items-start absolute top-[65px] left-0 w-[200px] p-[16px] rounded-md shadow-md`}
+            className={`${elementModeStyling} flex flex-col gap-1 z-10 items-start absolute top-[65px] left-0 w-[200px] p-[16px] rounded-md shadow-md`}
           >
             {regionsArr.map((area) => (
               <button
                 key={area}
-                className="w-full text-left py-1 rounded-md pl-3 hover:bg-slate-600 hover:text-white transition duration-500"
+                className="w-full text-left py-1 rounded-md pl-3 transition duration-500 hover:bg-slate-600 hover:text-white"
                 onClick={() => handleRegionFilter(area)}
               >
                 {area}

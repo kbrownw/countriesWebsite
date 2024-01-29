@@ -8,7 +8,10 @@ interface Props {
 export const DarkModeContext = createContext<DarkMode | undefined>(undefined);
 
 export const DarkModeWrapper = ({ children }: Props) => {
-  const [darkMode, setDarkMode] = useState<boolean>(true);
+  const darkModeLocalStorage = localStorage.getItem("darkMode");
+  const [darkMode, setDarkMode] = useState<boolean>(
+    darkModeLocalStorage ? JSON.parse(darkModeLocalStorage) : true
+  );
   const elementModeStyling: string = darkMode
     ? "text-white bg-dark-blue"
     : "text-light-dark-blue bg-white shadow-md";

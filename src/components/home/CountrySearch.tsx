@@ -5,11 +5,11 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Country } from "../../shared/types";
 
 interface Props {
-  setCountryData: (value: Country[]) => void;
+  setFilteredCountryData: (value: Country[]) => void;
   allCountryData: Country[];
 }
 
-const CountrySearch = ({ setCountryData, allCountryData }: Props) => {
+const CountrySearch = ({ setFilteredCountryData, allCountryData }: Props) => {
   const { darkMode, elementModeStyling } = useDarkModeContext();
   const [searchText, setSearchText] = useState<string>("");
   const placeholderStyle = darkMode ? "placeholder-white" : "";
@@ -20,7 +20,7 @@ const CountrySearch = ({ setCountryData, allCountryData }: Props) => {
         .toLocaleLowerCase()
         .includes(text.toLocaleLowerCase());
     });
-    setCountryData(filteredData);
+    setFilteredCountryData(filteredData);
   };
 
   useEffect(() => {

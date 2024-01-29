@@ -20,7 +20,7 @@ const CountryCard = ({ country }: Props) => {
   return (
     <button
       onClick={handleClick}
-      className={`${elementModeStyling} flex flex-col w-[275px] min-h-[375px] pb-5 mx-auto rounded-md overflow-hidden 
+      className={`${elementModeStyling} flex flex-col w-[275px] min-h-[375px] pb-5 rounded-md overflow-hidden 
       transition duration-500 hover:scale-110 hover:shadow-2xl`}
     >
       {/* FLAG IMAGE */}
