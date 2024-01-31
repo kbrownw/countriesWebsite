@@ -17,11 +17,11 @@ const regionsArr: Region[] = [
 ];
 
 interface Props {
-  setCountryData: (value: Country[]) => void;
+  setRegionFilteredData: (value: Country[]) => void;
   allCountryData: Country[];
 }
 
-const RegionFilter = ({ setCountryData, allCountryData }: Props) => {
+const RegionFilter = ({ setRegionFilteredData, allCountryData }: Props) => {
   const { elementModeStyling } = useDarkModeContext();
   const [region, setRegion] = useState<Region>(Region.All);
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
@@ -36,7 +36,7 @@ const RegionFilter = ({ setCountryData, allCountryData }: Props) => {
       }
       return country.region.toLocaleLowerCase() === lowerCaseRegion;
     });
-    setCountryData(filteredRegion);
+    setRegionFilteredData(filteredRegion);
   };
 
   return (

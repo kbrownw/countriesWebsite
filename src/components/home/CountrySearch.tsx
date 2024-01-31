@@ -5,27 +5,32 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Country } from "../../shared/types";
 
 interface Props {
-  setFilteredCountryData: (value: Country[]) => void;
-  allCountryData: Country[];
+  regionFilteredData: Country[];
+  setSearchedData: (value: Country[]) => void;
 }
 
-const CountrySearch = ({ setFilteredCountryData, allCountryData }: Props) => {
+const CountrySearch = ({ setSearchedData, regionFilteredData }: Props) => {
   const { darkMode, elementModeStyling } = useDarkModeContext();
   const [searchText, setSearchText] = useState<string>("");
   const placeholderStyle = darkMode ? "placeholder-white" : "";
 
   const searchFilter = (text: string) => {
-    const filteredData = allCountryData.filter((country) => {
+    const searchFilteredData = regionFilteredData.filter((country) => {
       return country.name.official
         .toLocaleLowerCase()
         .includes(text.toLocaleLowerCase());
     });
-    setFilteredCountryData(filteredData);
+    setSearchedData(searchFilteredData);
   };
 
   useEffect(() => {
     searchFilter(searchText);
   }, [searchText]);
+
+  useEffect(() => {
+    // Show all filtered countries when region is changed
+    searchFilter("");
+  }, [regionFilteredData]);
 
   return (
     <div className="relative">

@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelectCountryContext } from "../../context/SelectCountryContext";
-import useCountryAPI from "../../hooks/useCountryAPI";
 import { Country } from "../../shared/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import Button from "../../shared/Button";
 import BorderCountries from "./BorderCountries";
-import { useDarkModeContext } from "../../context/DarkModeContext";
-import { TailSpin } from "react-loader-spinner";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -34,7 +31,6 @@ const childVars = {
 
 const Details = ({ allCountryData, setAllCountryData }: Props) => {
   const { selectedCountry } = useSelectCountryContext();
-  const { darkMode } = useDarkModeContext();
   const [countryDetails, setCountryDetails] = useState<Country>();
   const [languageKeys, setLanguageKeys] = useState<string[]>([]);
   const [currencyKeys, setCurrencyKeys] = useState<string[]>([]);
@@ -42,8 +38,6 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
   const [currencies, setCurrencies] = useState<string>();
   const [languages, setLanguages] = useState<string>();
   const [nativeName, setNativeName] = useState<string>();
-  const { countries, isLoading, errorOccurred, getCountryData } =
-    useCountryAPI();
   const navigate = useNavigate();
   const [pageError, setPageError] = useState<boolean>(false);
 
@@ -55,8 +49,19 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
     }
   };
 
+  const getCountryDetails = (countryCode: string) => {
+    const selectedCountryIndex: number = allCountryData.findIndex((country) => {
+      return country.ccn3 === countryCode;
+    });
+    setCountryDetails(allCountryData[selectedCountryIndex]);
+    sessionStorage.setItem(
+      "countryDetails",
+      JSON.stringify(allCountryData[selectedCountryIndex])
+    );
+  };
+
   useEffect(() => {
-    // Use unknown object keys to get object values, append values to an array,
+    // Use keys obtained from getKeys() to get object values, append values to an array,
     // then convert the array to a comma separated list
     if (languageKeys) {
       if (countryDetails) {
@@ -80,14 +85,6 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
   }, [languageKeys]);
 
   useEffect(() => {
-    //Set country details local variable and session storage to currently selected country if data is pulled from API
-    if (countries.length > 0) {
-      setCountryDetails(countries[0]);
-      sessionStorage.setItem("countryDetails", JSON.stringify(countries[0]));
-    }
-  }, [countries]);
-
-  useEffect(() => {
     //When countryDetails variable is populated, trigger the getKeys() function
     if (countryDetails) {
       getKeys(countryDetails);
@@ -96,34 +93,40 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
 
   useEffect(() => {
     setPageError(false);
-    if (allCountryData.length < 0) {
+    //If allCountryData array is empty, pull data from session storage, otherwise show page error
+    if (allCountryData.length < 1) {
       const sessionAllCountryData = sessionStorage.getItem("allCountries");
       if (sessionAllCountryData) {
-        console.log("Set AllCountries data from stored session data.");
         setAllCountryData(JSON.parse(sessionAllCountryData));
       } else {
         setPageError(true);
       }
     }
+    //If selectedCountry variable is empty, pull country details from session storage
+    // Otherwise call getCountryDetails function to get country details
     if (!selectedCountry) {
       const sessionData = sessionStorage.getItem("countryDetails");
       if (sessionData) {
         const parsedData = JSON.parse(sessionData);
         setCountryDetails(parsedData);
+      } else {
+        setPageError(true);
       }
     } else {
-      getCountryData(`https://restcountries.com/v3.1/alpha/${selectedCountry}`);
+      getCountryDetails(selectedCountry);
     }
   }, [selectedCountry]);
 
-  if (errorOccurred || pageError) {
+  if (pageError) {
     return (
-      <div>
+      <div className="flex flex-col gap-10 w-[80%] justify-between pb-20 mt-20 mx-auto md:max-w-[1250px]">
         <Button onClick={() => navigate(-1)}>
           <FontAwesomeIcon icon={faArrowLeft} className="pr-3" />
           Back
         </Button>
-        <h1>Oops....Something went wrong. Try again later!</h1>
+        <h1 className="text-[22px] mx-auto mb-10 font-[800] md:text-[30px]">
+          Oops....Something went wrong. Try again later!
+        </h1>
       </div>
     );
   }
@@ -136,16 +139,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
           <FontAwesomeIcon icon={faArrowLeft} className="pr-3" />
           Back
         </Button>
-        {isLoading && (
-          <div
-            key={"LoadingSpinner"}
-            className="flex flex-col mx-auto items-center"
-          >
-            <h1 className="text-[34px] mb-10">Loading Data </h1>
-            <TailSpin color={darkMode ? "white" : "hsl(207, 26%, 17%)"} />
-          </div>
-        )}
-        {countryDetails !== undefined && !isLoading && (
+        {countryDetails !== undefined && (
           <motion.div
             key={countryDetails.cca3}
             initial="hidden"
