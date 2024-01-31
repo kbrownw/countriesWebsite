@@ -51,7 +51,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
 
   const getCountryDetails = (countryCode: string) => {
     const selectedCountryIndex: number = allCountryData.findIndex((country) => {
-      return country.ccn3 === countryCode;
+      return country.cca3 === countryCode;
     });
     setCountryDetails(allCountryData[selectedCountryIndex]);
     sessionStorage.setItem(
@@ -113,6 +113,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
         setPageError(true);
       }
     } else {
+      console.log("Triggered");
       getCountryDetails(selectedCountry);
     }
   }, [selectedCountry]);
@@ -133,7 +134,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
 
   return (
     <>
-      <div className="flex flex-col gap-10 w-[80%] justify-between pb-20 mt-20 mx-auto md:max-w-[1250px]">
+      <section className="flex flex-col gap-10 w-[80%] justify-between pb-20 mt-20 mx-auto md:max-w-[1250px]">
         {/* BACK BUTTON */}
         <Button onClick={() => navigate(-1)}>
           <FontAwesomeIcon icon={faArrowLeft} className="pr-3" />
@@ -227,7 +228,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
             </div>
           </motion.div>
         )}
-      </div>
+      </section>
     </>
   );
 };

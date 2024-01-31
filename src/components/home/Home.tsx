@@ -24,7 +24,7 @@ const Home = ({
     useState<Country[]>(regionFilteredData);
 
   return (
-    <div>
+    <section>
       <div className="flex flex-col gap-10 w-[90%] justify-between mx-auto md:flex-row md:max-w-[1250px]">
         {/* SEARCH INPUT */}
         <CountrySearch
@@ -52,7 +52,7 @@ const Home = ({
             <CountryCard key={country.name.common} country={country} />
           ))}
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -14,11 +14,7 @@ const BorderCountries = ({ allCountryData, borderCountries }: Props) => {
 
   const getFullName = (countryCode: string) => {
     let itemIndex: number = allCountryData.findIndex((country) => {
-      if (country.cca3 === countryCode) {
-        return true;
-      } else {
-        return false;
-      }
+      return country.cca3 === countryCode;
     });
     return allCountryData[itemIndex].name.common;
   };

@@ -13,7 +13,7 @@ const CountryCard = ({ country }: Props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    setSelectedCountry(country.ccn3);
+    setSelectedCountry(country.cca3);
     navigate("/details");
   };
 
