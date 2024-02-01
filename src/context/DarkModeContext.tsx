@@ -9,8 +9,9 @@ export const DarkModeContext = createContext<DarkMode | undefined>(undefined);
 
 export const DarkModeWrapper = ({ children }: Props) => {
   const darkModeLocalStorage = localStorage.getItem("darkMode");
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark").matches;
   const [darkMode, setDarkMode] = useState<boolean>(
-    darkModeLocalStorage ? JSON.parse(darkModeLocalStorage) : true
+    darkModeLocalStorage ? JSON.parse(darkModeLocalStorage) : systemTheme
   );
   const elementModeStyling: string = darkMode
     ? "text-white bg-dark-blue"

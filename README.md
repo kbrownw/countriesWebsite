@@ -44,9 +44,8 @@ Users should be able to:
 - Semantic HTML5 markup
 - CSS custom properties
 - Flexbox
-- CSS Grid
 - Mobile-first workflow
-- [React](https://reactjs.org/) - JS library
+- [React](https://reactjs.org/) - JS framework
 - [Vite](https://vitejs.dev/) - Devolopement Environment
 - [Typescript](https://www.typescriptlang.org/) - Javascript with syntax for types.
 - [TailwindCSS](https://tailwindcss.com/) - For styles
