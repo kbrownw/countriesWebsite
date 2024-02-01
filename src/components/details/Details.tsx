@@ -43,9 +43,15 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
 
   const getKeys = (country: Country) => {
     if (country) {
-      setLanguageKeys(Object.keys(country.languages));
-      setCurrencyKeys(Object.keys(country.currencies));
-      setNativeNameKeys(Object.keys(country.name.nativeName));
+      if (country.languages) {
+        setLanguageKeys(Object.keys(country.languages));
+      }
+      if (country.currencies) {
+        setCurrencyKeys(Object.keys(country.currencies));
+      }
+      if (country.name.nativeName) {
+        setNativeNameKeys(Object.keys(country.name.nativeName));
+      }
     }
   };
 
@@ -113,7 +119,6 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
         setPageError(true);
       }
     } else {
-      console.log("Triggered");
       getCountryDetails(selectedCountry);
     }
   }, [selectedCountry]);
@@ -140,7 +145,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
           <FontAwesomeIcon icon={faArrowLeft} className="pr-3" />
           Back
         </Button>
-        {countryDetails !== undefined && (
+        {countryDetails && (
           <motion.div
             key={countryDetails.cca3}
             initial="hidden"
@@ -180,7 +185,7 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
                 >
                   <motion.p variants={childVars}>
                     <span className="font-bold">Native Name:</span>{" "}
-                    {nativeName && nativeName}
+                    {nativeName ? nativeName : "N/A"}
                   </motion.p>
                   <motion.p variants={childVars}>
                     <span className="font-bold">Population: </span>{" "}
@@ -209,10 +214,12 @@ const Details = ({ allCountryData, setAllCountryData }: Props) => {
                     {countryDetails.tld}
                   </motion.p>
                   <motion.p variants={childVars}>
-                    <span className="font-bold">Currencies:</span> {currencies}
+                    <span className="font-bold">Currencies:</span>{" "}
+                    {currencies ? currencies : "N/A"}
                   </motion.p>
                   <motion.p variants={childVars}>
-                    <span className="font-bold">Languages:</span> {languages}
+                    <span className="font-bold">Languages:</span>{" "}
+                    {languages ? languages : "N/A"}
                   </motion.p>
                 </motion.div>
               </div>
